@@ -4,7 +4,7 @@
 i=1
 
 # 提示用户输入 IP 地址
-echo -e "\033[34m请输入目标 IP 地址（每行一个，输入空行结束）：\033[0m"
+echo -e "\033[33m请输入目标 IP 地址（每行一个，输入空行结束）：\033[0m"
 
 # 从用户输入读取多行 IP，保存到数组
 ip_list=()
@@ -28,8 +28,8 @@ counter() {
     let i++
 }
 
-# 提示用户选择操作
-echo -e "\033[34m请选择要执行的操作:\033[0m"
+# 提示用户选择操作（改为黄色）
+echo -e "\033[33m请选择要执行的操作:\033[0m"
 echo "1) 卸载并重新安装 bnxt-en-dkms，并重启"
 echo "2) 设置 PXE 启动并循环电源"
 echo "3) 停止 authzd-agent 服务"
@@ -42,9 +42,9 @@ if [[ "$option" != "1" && "$option" != "2" && "$option" != "3" && "$option" != "
     exit 1
 fi
 
-# 如果用户选择了选项 4，提示子选项
+# 如果用户选择了选项 4，提示子选项（改为黄色）
 if [[ "$option" == "4" ]]; then
-    echo -e "\033[34m请选择具体的子操作:\033[0m"
+    echo -e "\033[33m请选择具体的子操作:\033[0m"
     echo "1) 重置主板管理控制器 (ipmitool mc reset cold)"
     echo "2) 设置 PXE 启动并循环电源 (ipmitool chassis bootdev pxe; ipmitool chassis power cycle)"
     read -p "输入子选项 (1 或 2): " sub_option
