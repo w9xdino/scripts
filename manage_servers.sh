@@ -1,62 +1,62 @@
 #!/bin/bash
 
-# 初始化计数器
+# Initialize the counter
 i=1
 
-# 提示用户输入 IP 地址
-echo -e "\033[33m请输入目标 IP 地址（每行一个，输入空行结束）：\033[0m"
+# Prompt user to input IP addresses
+echo -e "\033[33mPlease enter the target IP addresses (one per line, empty line to end):\033[0m"
 
-# 从用户输入读取多行 IP，保存到数组
+# Read multiple IP addresses from user input and store them in an array
 ip_list=()
 while IFS= read -r ip; do
-    [[ -z "$ip" ]] && break  # 遇到空行结束输入
+    [[ -z "$ip" ]] && break  # End input when an empty line is entered
     ip_list+=("$ip")
 done
 
-# 检查是否输入了 IP
+# Check if any IP addresses were entered
 if [[ ${#ip_list[@]} -eq 0 ]]; then
-    echo -e "\033[31m错误: 未输入任何 IP！\033[0m"
+    echo -e "\033[31mError: No IP addresses entered!\033[0m"
     exit 1
 fi
 
-# 获取总 IP 数量
+# Get the total number of IP addresses
 j=${#ip_list[@]}
 
-# 计数器函数
+# Counter function
 counter() {
     echo -e "\033[32m[Completed $i/$j]\033[0m\n"
     let i++
 }
 
-# 提示用户选择操作（改为黄色）
-echo -e "\033[33m请选择要执行的操作:\033[0m"
-echo "1) 卸载并重新安装 bnxt-en-dkms，并重启"
-echo "2) 设置 PXE 启动并循环电源"
-echo "3) 停止 authzd-agent 服务"
-echo "4) minios 操作"
-read -p "输入选项 (1, 2, 3 或 4): " option
+# Prompt user to select an operation (changed to yellow)
+echo -e "\033[33mPlease select the operation to perform:\033[0m"
+echo "1) Uninstall and reinstall bnxt-en-dkms, then reboot"
+echo "2) Set PXE boot and cycle power"
+echo "3) Stop authzd-agent service"
+echo "4) minios operations"
+read -p "Enter option (1, 2, 3, or 4): " option
 
-# 检查输入是否合法
+# Check if the input option is valid
 if [[ "$option" != "1" && "$option" != "2" && "$option" != "3" && "$option" != "4" ]]; then
-    echo -e "\033[31m无效选项，退出...\033[0m"
+    echo -e "\033[31mInvalid option, exiting...\033[0m"
     exit 1
 fi
 
-# 如果用户选择了选项 4，提示子选项（改为黄色）
+# If the user selects option 4, prompt for a sub-option (changed to yellow)
 if [[ "$option" == "4" ]]; then
-    echo -e "\033[33m请选择具体的子操作:\033[0m"
-    echo "1) 重置主板管理控制器 (ipmitool mc reset cold)"
-    echo "2) 设置 PXE 启动并循环电源 (ipmitool chassis bootdev pxe; ipmitool chassis power cycle)"
-    read -p "输入子选项 (1 或 2): " sub_option
+    echo -e "\033[33mPlease select the sub-operation:\033[0m"
+    echo "1) Reset motherboard management controller (ipmitool mc reset cold)"
+    echo "2) Set PXE boot and cycle power (ipmitool chassis bootdev pxe; ipmitool chassis power cycle)"
+    read -p "Enter sub-option (1 or 2): " sub_option
 
-    # 检查子选项输入是否合法
+    # Check if the sub-option input is valid
     if [[ "$sub_option" != "1" && "$sub_option" != "2" ]]; then
-        echo -e "\033[31m无效子选项，退出...\033[0m"
+        echo -e "\033[31mInvalid sub-option, exiting...\033[0m"
         exit 1
     fi
 fi
 
-# 遍历 IP 并执行相应操作
+# Iterate over the IPs and perform the corresponding operation
 for ip in "${ip_list[@]}"; do
     echo -e "\n\033[36m===============================\033[0m"
     echo -e "\033[33mProcessing $ip...\033[0m"
@@ -78,12 +78,12 @@ for ip in "${ip_list[@]}"; do
         4)
             case $sub_option in
                 1)
-                    echo -e "\033[32m[执行操作: 重置主板管理控制器]\033[0m"
+                    echo -e "\033[32m[Executing operation: Reset motherboard management controller]\033[0m"
                     sshpass -p "minios@123" ssh -o StrictHostKeyChecking=no root@"$ip" \
                     "ipmitool mc reset cold" < /dev/null
                     ;;
                 2)
-                    echo -e "\033[32m[执行操作: 设置 PXE 启动并循环电源]\033[0m"
+                    echo -e "\033[32m[Executing operation: Set PXE boot and cycle power]\033[0m"
                     sshpass -p "minios@123" ssh -o StrictHostKeyChecking=no root@"$ip" \
                     "ipmitool chassis bootdev pxe; ipmitool chassis power cycle" < /dev/null
                     ;;
@@ -94,5 +94,5 @@ for ip in "${ip_list[@]}"; do
     counter
 done
 
-echo -e "\033[32m所有任务完成！\033[0m"
+echo -e "\033[32mAll tasks completed!\033[0m"
 
